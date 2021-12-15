@@ -5,6 +5,5 @@
     "*.zip"
   ],
   "private": false,
-  "description": "Binary files for Cypress",
-  "author": "",
+  "description": "Binary files for Cypress"
 }

@@ -8,6 +8,7 @@ const version = argv._[0];
 const rimraf = require('rimraf');
 const {AVAILABLE_ARCH_LIST, AVAILABLE_PLATFORMS} = require("../../utils/constants");
 const getBinaryName = require("../../utils/get-binary-name");
+const clean = require('../../utils/clean');
 
 const publish = async (platform, arch) => {
     const pkg = require('./templates/package.json');
@@ -27,16 +28,12 @@ const publish = async (platform, arch) => {
     await download(version, platform, arch);
 
     console.log('Publishing package');
-    const command = spawn("npm", ['publish', '--access', 'public']);
-    command.stdout.on("data", data => console.log(`${data}`));
-    command.stderr.on("data", err => console.error(`${err}`));
-    command.on('error', (error) => console.error(error.message));
-
+    // const command = spawn("npm", ['publish', '--access', 'public']);
+    // command.stdout.on("data", data => console.log(`${data}`));
+    // command.stderr.on("data", err => console.error(`${err}`));
+    // command.on('error', (error) => console.error(error.message));
+    //
     console.log(`Package ${pkg.name} has been published successfully`);
-}
-
-const clean = (path) => {
-    return new Promise(resolve => rimraf(path, {}, resolve));
 }
 
 (async () => {
