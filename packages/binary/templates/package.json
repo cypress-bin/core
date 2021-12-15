@@ -1,0 +1,8 @@
+{
+  "name": "@cypress-bin/binary",
+  "license": "MIT",
+  "files": [
+    "*.zip"
+  ],
+  "description": "Binary files for Cypress",
+}

@@ -1,0 +1,1 @@
+module.exports = (platform, arch) => `@cypress-bin/binary-${platform}-${arch}`;

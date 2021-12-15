@@ -1,0 +1,5 @@
+archives
+.bin
+cypress
+node_modules
+.idea
