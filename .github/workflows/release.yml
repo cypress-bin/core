@@ -16,7 +16,5 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: git config --username="Piotr Sałkowski"
-      - run: git config --email="skc.peter@gmail.com"
       - run: yarn --frozen-lockfile
       - run: node release.js
