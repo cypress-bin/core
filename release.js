@@ -28,15 +28,12 @@ const getTags = async (repoPath) => {
 
     const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
 
-    console.log('newTags', newTags);
     if (!newTags.length) {
         console.log('No new tags. Skipping.');
         process.exit(0);
     }
 
-    const extraNewTags = ['5.3.0'];
-
-    for (let tag of extraNewTags) {
+    for (let tag of newTags) {
         console.log(`Generate release for ${tag}`)
         const res = await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
 

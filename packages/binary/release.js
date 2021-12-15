@@ -9,7 +9,6 @@ const {AVAILABLE_ARCH_LIST, AVAILABLE_PLATFORMS} = require("../../utils/constant
 const getBinaryName = require("../../utils/get-binary-name");
 const clean = require('../../utils/clean');
 const exec = require('../../utils/exec');
-const {NOT_FOUND} = require("../../utils/exit-codes");
 
 const publish = async (platform, arch) => {
     const pkg = require(path.join(__dirname, './templates/package.json'));
@@ -45,4 +44,6 @@ const publish = async (platform, arch) => {
             await publish(platform, arch)
         }
     }
+
+    process.exit(0);
 })();

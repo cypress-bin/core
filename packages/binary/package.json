@@ -1,9 +1,9 @@
 {
-  "name": "@cypress-bin/binary-win32-x86",
+  "name": "@cypress-bin/binary-linux-x64",
   "license": "MIT",
   "files": [
     "*.zip"
   ],
-  "private": false,
-  "description": "Binary files for Cypress"
+  "description": "Binary files for Cypress on linux x64",
+  "version": "5.4.0"
 }
