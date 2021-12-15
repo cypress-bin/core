@@ -1,4 +1,3 @@
-const { spawn } = require("child_process");
 const download = require('./download.js');
 const fs = require('fs');
 const yargs = require('yargs/yargs')
@@ -9,30 +8,29 @@ const rimraf = require('rimraf');
 const {AVAILABLE_ARCH_LIST, AVAILABLE_PLATFORMS} = require("../../utils/constants");
 const getBinaryName = require("../../utils/get-binary-name");
 const clean = require('../../utils/clean');
+const exec = require('../../utils/exec');
+const {NOT_FOUND} = require("../../utils/exit-codes");
 
 const publish = async (platform, arch) => {
-    const pkg = require('./templates/package.json');
+    const pkg = require(path.join(__dirname, './templates/package.json'));
 
     pkg.version = version;
     pkg.name = getBinaryName(platform, arch);
     pkg.description = `Binary files for Cypress on ${platform} ${arch}`;
 
-    fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+    fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
 
     console.log(`Start publish process for ${pkg.name}`);
 
     console.log('Clean artifacts');
-    await clean('*.zip');
+    await clean('./**/*.zip');
 
     console.log(`Download binary`)
     await download(version, platform, arch);
 
     console.log('Publishing package');
-    // const command = spawn("npm", ['publish', '--access', 'public']);
-    // command.stdout.on("data", data => console.log(`${data}`));
-    // command.stderr.on("data", err => console.error(`${err}`));
-    // command.on('error', (error) => console.error(error.message));
-    //
+    await exec('npm publish --access public')
+
     console.log(`Package ${pkg.name} has been published successfully`);
 }
 
@@ -42,9 +40,19 @@ const publish = async (platform, arch) => {
         process.exit(1);
     }
 
-    AVAILABLE_ARCH_LIST.forEach((arch) => {
-        AVAILABLE_PLATFORMS.forEach(async (platform) => {
-            await publish(platform, arch)
-        });
-    });
+    let hasError = false;
+
+    for(let arch of AVAILABLE_ARCH_LIST) {
+        for (let platform of AVAILABLE_PLATFORMS) {
+            try {
+                await publish(platform, arch)
+            } catch(err) {
+                hasError = true;
+            }
+        }
+    }
+
+    if (hasError) {
+        process.exit(NOT_FOUND);
+    }
 })();

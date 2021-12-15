@@ -1,7 +1,9 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+const path = require('path');
 const getUrl = require('../../utils/get-url');
 const getName = require('../../utils/get-name');
+const {NOT_FOUND} = require("../../utils/exit-codes");
 
 
 const download = (version, platform, arch) => {
@@ -10,13 +12,19 @@ const download = (version, platform, arch) => {
     console.log(`Downloading ${name}`);
 
     return fetch(getUrl(version, platform, arch)).then(
-        res =>
-            new Promise((resolve, reject) => {
-                const dest = fs.createWriteStream(name);
+        res => {
+            if (res.status === 404) {
+                console.error(`Package for version ${version} not found`);
+                process.exit(NOT_FOUND);
+            }
+
+            return new Promise((resolve, reject) => {
+                const dest = fs.createWriteStream(path.join(__dirname, name));
                 res.body.pipe(dest);
                 res.body.on('end', () => resolve());
                 dest.on('error', reject);
             })
+        }
     )
 }
 

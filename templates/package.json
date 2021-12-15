@@ -13,7 +13,5 @@
     "adm-zip": "^0.5.9",
     "rimraf": "^3.0.2"
   },
-  "description": "This package is dedicated for users that are behind a firewall, and have access only to npm registry.",
-  "devDependencies": {},
-  "author": ""
+  "description": "This package is dedicated for users that are behind a firewall, and have access only to npm registry."
 }

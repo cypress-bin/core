@@ -1,7 +1,14 @@
 const simpleGit = require('simple-git');
 const clean = require('./utils/clean');
-const shell = require('shelljs');
+const fs = require('fs');
+const exec = require('./utils/exec');
+const path = require('path');
+const {NOT_FOUND} = require("./utils/exit-codes");
+const semver = require('semver');
+const getBinaryName = require("./utils/get-binary-name");
+const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST} = require("./utils/constants");
 
+const MIN_RELEASE_VERSION = '5.0.0';
 const CYPRESS_DIR = 'cypress';
 const git = simpleGit();
 
@@ -12,7 +19,6 @@ const getTags = async (repoPath) => {
     return (await cgit.listRemote(['--tags'])).split('\n').map(line => line.match(semver)).filter(Boolean).map(version => version[0].replace('tags/v', ''));
 }
 
-
 (async () => {
     // await clean(CYPRESS_DIR);
     //
@@ -20,19 +26,50 @@ const getTags = async (repoPath) => {
     const cypressTags = await getTags(CYPRESS_DIR);
     const currentTags = await getTags('.');
 
-    const newTags = cypressTags.filter(tag => !currentTags.includes(tag));
+    const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
 
+    console.log('newTags', newTags);
     if (!newTags.length) {
         console.log('No new tags. Skipping.');
         process.exit(0);
     }
 
-    const extraNewTags = [newTags[0], newTags[1]];
+    const extraNewTags = ['5.0.0'];
 
-    extraNewTags.forEach(tag => {
+    for (let tag of extraNewTags) {
         console.log(`Generate release for ${tag}`)
-        shell.exec(`node packages/binary/release.js ${tag}`);
-    });
+        const { code } = await exec(`node packages/binary/release.js ${tag}`);
+
+        if (code === NOT_FOUND) {
+            console.log(`Binary not found for ${tag}`);
+        }
+
+        console.log(`Create git tag v${tag}`);
+        await git.tag([
+            '-a', `v${tag}`,
+            '-m', 'Automatic release based on Cypress tag'
+        ]);
+
+        console.log('Push git tag to origin');
+        await git.pushTags('origin');
+
+        const peerDependency = AVAILABLE_PLATFORMS
+            .map(platform => AVAILABLE_ARCH_LIST
+                .map(arch => getBinaryName(platform, arch)))
+            .reduce((a, b) => [...a, ...b], [])
+            .map(name => ({ [name]: tag }))
+            .reduce((a, b) => ({...a, ...b}), {});
+
+        const pkg = require(path.join(__dirname, './templates/package.json'));
+
+        pkg.version = tag;
+        pkg.peerDependency = peerDependency;
+
+        fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
+
+        console.log('Publish package to npm registry');
+        await exec('npm publish --access public');
+    }
 })();
 
 
