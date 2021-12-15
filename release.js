@@ -34,7 +34,7 @@ const getTags = async (repoPath) => {
         process.exit(0);
     }
 
-    const extraNewTags = ['5.2.0'];
+    const extraNewTags = ['5.3.0'];
 
     for (let tag of extraNewTags) {
         console.log(`Generate release for ${tag}`)
