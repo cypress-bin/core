@@ -15,7 +15,7 @@ const download = (version, platform, arch) => {
         res => {
             if (res.status === 404) {
                 console.error(`Package for version ${version} not found`);
-                process.exit(NOT_FOUND);
+                return;
             }
 
             return new Promise((resolve, reject) => {

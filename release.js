@@ -20,9 +20,9 @@ const getTags = async (repoPath) => {
 }
 
 (async () => {
-    // await clean(CYPRESS_DIR);
-    //
-    // await git.clone('https://github.com/cypress-io/cypress.git', CYPRESS_DIR, {'--depth': 1});
+    await clean(CYPRESS_DIR);
+
+    await git.clone('https://github.com/cypress-io/cypress.git', CYPRESS_DIR, {'--depth': 1});
     const cypressTags = await getTags(CYPRESS_DIR);
     const currentTags = await getTags('.');
 
@@ -34,13 +34,14 @@ const getTags = async (repoPath) => {
         process.exit(0);
     }
 
-    const extraNewTags = ['5.0.0'];
+    const extraNewTags = ['5.2.0'];
 
     for (let tag of extraNewTags) {
         console.log(`Generate release for ${tag}`)
-        const { code } = await exec(`node packages/binary/release.js ${tag}`);
+        const res = await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
 
-        if (code === NOT_FOUND) {
+        console.log('res', res);
+        if (res.code === NOT_FOUND) {
             console.log(`Binary not found for ${tag}`);
         }
 
@@ -68,7 +69,7 @@ const getTags = async (repoPath) => {
         fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
 
         console.log('Publish package to npm registry');
-        await exec('npm publish --access public');
+        await exec('npm publish --access public', { cwd: __dirname });
     }
 })();
 

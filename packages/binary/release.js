@@ -1,10 +1,10 @@
 const download = require('./download.js');
 const fs = require('fs');
+const path = require('path');
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv;
 const version = argv._[0];
-const rimraf = require('rimraf');
 const {AVAILABLE_ARCH_LIST, AVAILABLE_PLATFORMS} = require("../../utils/constants");
 const getBinaryName = require("../../utils/get-binary-name");
 const clean = require('../../utils/clean');
@@ -29,7 +29,7 @@ const publish = async (platform, arch) => {
     await download(version, platform, arch);
 
     console.log('Publishing package');
-    await exec('npm publish --access public')
+    await exec('npm publish --access public', {cwd: __dirname})
 
     console.log(`Package ${pkg.name} has been published successfully`);
 }
@@ -40,19 +40,9 @@ const publish = async (platform, arch) => {
         process.exit(1);
     }
 
-    let hasError = false;
-
     for(let arch of AVAILABLE_ARCH_LIST) {
         for (let platform of AVAILABLE_PLATFORMS) {
-            try {
-                await publish(platform, arch)
-            } catch(err) {
-                hasError = true;
-            }
+            await publish(platform, arch)
         }
-    }
-
-    if (hasError) {
-        process.exit(NOT_FOUND);
     }
 })();
