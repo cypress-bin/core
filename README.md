@@ -20,10 +20,3 @@ Or modify your package.json and add:
 ```
     "cypress:open": "CYPRESS_RUN_BINARY=./node_modules/cypress-bin/.bin/Cypress/Cypress cypress open"
 ```
-
-## Release
-
-
-## Unpack
-
-Script will unpack binary based on your OS platform and arch. 

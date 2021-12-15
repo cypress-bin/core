@@ -1,4 +1,5 @@
 const os = require('os');
+const fs = require('fs');
 const rimraf = require('rimraf');
 const AdmZip = require('adm-zip');
 const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR, DOWNLOAD_DIR} = require("./utils/constants");
@@ -22,7 +23,7 @@ const checkIfSupportedPlatform = (platform, arch) => {
 }
 
 const checkIfDependencyInstalled = (platform, arch) => {
-    return fs.existsSync(getBinaryDir(platform, arch));
+    return fs.existsSync(path.join(__dirname, getBinaryDir(platform, arch)));
 }
 
 const unpack = (platform, arch) => {
@@ -32,9 +33,10 @@ const unpack = (platform, arch) => {
     console.log(`Unpacking ${archive}`)
 
     const zip = new AdmZip(archive);
+    const dest = path.join(__dirname, BIN_DIR);
 
-    rimraf(BIN_DIR, {}, () => {
-        zip.extractAllTo(BIN_DIR, true);
+    rimraf(dest, {}, () => {
+        zip.extractAllTo(dest, true);
     });
 }
 
