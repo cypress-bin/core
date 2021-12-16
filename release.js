@@ -37,10 +37,6 @@ const getTags = async (repoPath) => {
         console.log(`Generate release for ${tag}`)
         await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
 
-        if (res.code === NOT_FOUND) {
-            console.log(`Binary not found for ${tag}`);
-        }
-
         console.log(`Create git tag v${tag}`);
         await git.tag([
             '-a', `v${tag}`,
