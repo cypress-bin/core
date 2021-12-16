@@ -1,9 +1,7 @@
 const simpleGit = require('simple-git');
-const clean = require('./utils/clean');
 const fs = require('fs');
 const exec = require('./utils/exec');
 const path = require('path');
-const {NOT_FOUND} = require("./utils/exit-codes");
 const semver = require('semver');
 const getBinaryName = require("./utils/get-binary-name");
 const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST} = require("./utils/constants");
@@ -20,7 +18,7 @@ const getTags = async (repoPath) => {
 }
 
 (async () => {
-    await clean(CYPRESS_DIR);
+    fs.rmSync(CYPRESS_DIR, { recursive: true, force: true })
 
     await git.clone('https://github.com/cypress-io/cypress.git', CYPRESS_DIR, {'--depth': 1});
     const cypressTags = await getTags(CYPRESS_DIR);
@@ -62,7 +60,6 @@ const getTags = async (repoPath) => {
 
         console.log('Publish package to npm registry');
         await exec('npm publish --access public', { cwd: __dirname });
-        process.exit(1);
     }
 })();
 

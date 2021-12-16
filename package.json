@@ -4,6 +4,7 @@
   "dependencies": {
     "adm-zip": "^0.5.9",
     "node-fetch": "2",
+    "rimraf": "^3.0.2",
     "semver": "^7.3.5",
     "shelljs": "^0.8.4",
     "tar": "^6.1.11",
