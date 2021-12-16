@@ -35,9 +35,8 @@ const getTags = async (repoPath) => {
 
     for (let tag of newTags) {
         console.log(`Generate release for ${tag}`)
-        const res = await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
+        await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
 
-        console.log('res', res);
         if (res.code === NOT_FOUND) {
             console.log(`Binary not found for ${tag}`);
         }
@@ -67,6 +66,7 @@ const getTags = async (repoPath) => {
 
         console.log('Publish package to npm registry');
         await exec('npm publish --access public', { cwd: __dirname });
+        process.exit(1);
     }
 })();
 

@@ -6,6 +6,7 @@ const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR, DOWNLOAD_DIR} = requir
 const getName = require("./utils/get-name");
 const path = require('path');
 const getBinaryName = require('./utils/get-binary-name');
+const tar = require('tar');
 
 const arch = os.arch();
 const platform = os.platform();
@@ -28,16 +29,16 @@ const checkIfDependencyInstalled = (platform, arch) => {
 
 const unpack = (platform, arch) => {
     const name = getName(platform, arch);
-    const archive = path.join(__dirname, getBinaryDir(platform, arch), `${name}.zip`);
+    const archive = path.join(__dirname, getBinaryDir(platform, arch), `${name}.tgz`);
+    const bin = path.join(__dirname, BIN_DIR);
+
+    // clean
+    fs.rmSync(bin, { recursive: true, force: true })
+    // recreate directory
+    fs.mkdirSync(bin, {recursive: true});
 
     console.log(`Unpacking ${archive}`)
-
-    const zip = new AdmZip(archive);
-    const dest = path.join(__dirname, BIN_DIR);
-
-    rimraf(dest, {}, () => {
-        zip.extractAllTo(dest, true);
-    });
+    tar.extract({ file: archive, sync: true, cwd: bin });
 }
 
 if (!checkIfSupportedPlatform(platform, arch)) {

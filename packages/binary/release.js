@@ -9,6 +9,7 @@ const {AVAILABLE_ARCH_LIST, AVAILABLE_PLATFORMS} = require("../../utils/constant
 const getBinaryName = require("../../utils/get-binary-name");
 const clean = require('../../utils/clean');
 const exec = require('../../utils/exec');
+const repack = require("./repack");
 
 const publish = async (platform, arch) => {
     const pkg = require(path.join(__dirname, './templates/package.json'));
@@ -23,9 +24,13 @@ const publish = async (platform, arch) => {
 
     console.log('Clean artifacts');
     await clean('./**/*.zip');
+    await clean('./**/*.tgz');
 
     console.log(`Download binary`)
     await download(version, platform, arch);
+
+    console.log('Repack zip to tgz');
+    await repack(platform, arch);
 
     console.log('Publishing package');
     await exec('npm publish --access public', {cwd: __dirname})
