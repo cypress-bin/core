@@ -27,7 +27,12 @@ const publish = async (platform, arch) => {
     await clean('./**/*.tgz');
 
     console.log(`Download binary`)
-    await download(version, platform, arch);
+    const status = await download(version, platform, arch);
+
+    if (status === 404) {
+        console.log(`Binary not found for ${pkg.name}`);
+        return;
+    }
 
     console.log('Repack zip to tgz');
     await repack(platform, arch);

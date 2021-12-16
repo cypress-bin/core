@@ -15,13 +15,13 @@ const download = (version, platform, arch) => {
         res => {
             if (res.status === 404) {
                 console.error(`Package for version ${version} not found`);
-                return;
+                return 404;
             }
 
             return new Promise((resolve, reject) => {
                 const dest = fs.createWriteStream(path.join(__dirname, name));
                 res.body.pipe(dest);
-                res.body.on('end', () => resolve());
+                res.body.on('end', () => resolve(200));
                 dest.on('error', reject);
             })
         }

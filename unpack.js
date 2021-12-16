@@ -1,8 +1,6 @@
 const os = require('os');
 const fs = require('fs');
-const rimraf = require('rimraf');
-const AdmZip = require('adm-zip');
-const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR, DOWNLOAD_DIR} = require("./utils/constants");
+const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR} = require("./utils/constants");
 const getName = require("./utils/get-name");
 const path = require('path');
 const getBinaryName = require('./utils/get-binary-name');
