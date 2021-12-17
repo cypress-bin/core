@@ -24,7 +24,7 @@ const publish = async (platform, arch) => {
 
     console.log('Clean artifacts');
     await clean('./**/*.zip');
-    await clean('./**/*.tgz');
+    await clean('./**/*.xz');
 
     console.log(`Download binary`)
     const status = await download(version, platform, arch);
