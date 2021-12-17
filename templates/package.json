@@ -7,6 +7,7 @@
   "files": [
     "archives/*.zip",
     "utils/*.js",
+    "bin/**/*",
     "unpack.js"
   ],
   "dependencies": {
