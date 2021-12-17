@@ -1,6 +1,7 @@
 const simpleGit = require('simple-git');
 const fs = require('fs');
 const exec = require('./utils/exec');
+const clean = require('./utils/clean');
 const path = require('path');
 const semver = require('semver');
 const getBinaryName = require("./utils/get-binary-name");
@@ -18,7 +19,7 @@ const getTags = async (repoPath) => {
 }
 
 (async () => {
-    fs.rmSync(CYPRESS_DIR, { recursive: true, force: true })
+    await clean(CYPRESS_DIR);
 
     await git.clone('https://github.com/cypress-io/cypress.git', CYPRESS_DIR, {'--depth': 1});
     const cypressTags = await getTags(CYPRESS_DIR);

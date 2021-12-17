@@ -2,6 +2,7 @@ const os = require('os');
 const fs = require('fs');
 const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR} = require("./utils/constants");
 const getName = require("./utils/get-name");
+const clean = require("./utils/clean");
 const path = require('path');
 const getBinaryName = require('./utils/get-binary-name');
 const tar = require('tar');
@@ -25,13 +26,13 @@ const checkIfDependencyInstalled = (platform, arch) => {
     return fs.existsSync(path.join(__dirname, getBinaryDir(platform, arch)));
 }
 
-const unpack = (platform, arch) => {
+const unpack = async (platform, arch) => {
     const name = getName(platform, arch);
     const archive = path.join(__dirname, getBinaryDir(platform, arch), `${name}.tgz`);
     const bin = path.join(__dirname, BIN_DIR);
 
     // clean
-    fs.rmSync(bin, { recursive: true, force: true })
+    await clean(bin)
     // recreate directory
     fs.mkdirSync(bin, {recursive: true});
 
@@ -49,4 +50,7 @@ if(!checkIfDependencyInstalled(platform, arch)) {
     process.exit(1);
 }
 
-unpack(platform, arch);
+(async () => {
+    await unpack(platform, arch);
+})();
+
