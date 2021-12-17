@@ -18,7 +18,7 @@ const publish = async (platform, arch) => {
     pkg.name = getBinaryName(platform, arch);
     pkg.description = `Binary files for Cypress on ${platform} ${arch}`;
 
-    fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
+    fs.writeFileSync(path.join(__dirname, 'package.jnode son'), JSON.stringify(pkg, null, 2));
 
     console.log(`Start publish process for ${pkg.name}`);
 

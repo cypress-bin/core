@@ -3,8 +3,10 @@ const fs = require('fs');
 const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR} = require("./utils/constants");
 const getName = require("./utils/get-name");
 const clean = require("./utils/clean");
+const exec = require("./utils/exec");
 const xz = require("./utils/xz");
 const path = require('path');
+const AdmZip = require('adm-zip');
 const getBinaryName = require('./utils/get-binary-name');
 
 const arch = os.arch();
@@ -40,10 +42,13 @@ const unpack = async (platform, arch) => {
     await xz(`-d ${archive}.xz`);
 
     const zip = new AdmZip(archive);
-    const dest = path.join(__dirname);
 
     console.log('Extract zip file');
-    zip.extractAllTo(dest, true);
+    zip.extractAllTo(bin, true);
+
+    if (os.platform() === 'linux') {
+        await exec(`chmod +x ${bin}/Cypress/Cypress`);
+    }
 }
 
 if (!checkIfSupportedPlatform(platform, arch)) {

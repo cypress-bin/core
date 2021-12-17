@@ -11,8 +11,10 @@
     "unpack.js"
   ],
   "dependencies": {
+    "adm-zip": "^0.5.9",
     "tar": "^6.1.11",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "shelljs": "^0.8.4"
   },
   "description": "This package is dedicated for users that are behind a firewall, and have access only to npm registry."
 }

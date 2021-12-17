@@ -3,7 +3,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
-module.exports = (command) => {
+module.exports = (command, options = {}) => {
     const platform = os.platform();
     const dir = path.join(__dirname, '../bin', platform);
 
@@ -14,5 +14,5 @@ module.exports = (command) => {
 
     const xz = path.join(dir, platform === 'win32' ? 'xz.exe' : 'xz');
 
-    return exec(`${xz} ${command}`);
+    return exec(`${xz} ${command}`, options);
 }
