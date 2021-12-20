@@ -1,13 +1,13 @@
 const simpleGit = require('simple-git');
-const fs = require('fs');
 const exec = require('./utils/exec');
 const clean = require('./utils/clean');
-const path = require('path');
+const getBinaryName = require('./utils/get-binary-name');
 const semver = require('semver');
-const getBinaryName = require("./utils/get-binary-name");
+const fs = require('fs');
+const path = require('path');
 const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST} = require("./utils/constants");
 
-const MIN_RELEASE_VERSION = '5.0.0';
+const MIN_RELEASE_VERSION = '5.2.0';
 const CYPRESS_DIR = 'cypress';
 const git = simpleGit().addConfig('user.name', 'Piotr Sałkowski').addConfig('user.email', 'skc.peter@gmail.com');
 
@@ -33,16 +33,13 @@ const getTags = async (repoPath) => {
     }
 
     for (let tag of newTags) {
-        console.log(`Generate release for ${tag}`)
         await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
 
-        console.log(`Create git tag v${tag}`);
         await git.tag([
             '-a', `v${tag}`,
             '-m', 'Automatic release based on Cypress tag'
         ]);
 
-        console.log('Push git tag to origin');
         await git.pushTags('origin');
 
         const peerDependency = AVAILABLE_PLATFORMS

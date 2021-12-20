@@ -18,15 +18,13 @@ const publish = async (platform, arch) => {
     pkg.name = getBinaryName(platform, arch);
     pkg.description = `Binary files for Cypress on ${platform} ${arch}`;
 
-    fs.writeFileSync(path.join(__dirname, 'package.jnode son'), JSON.stringify(pkg, null, 2));
+    console.log(`[${version}] Start publishing ${pkg.name}`);
 
-    console.log(`Start publish process for ${pkg.name}`);
+    fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
 
-    console.log('Clean artifacts');
     await clean('./**/*.zip');
     await clean('./**/*.xz');
 
-    console.log(`Download binary`)
     const status = await download(version, platform, arch);
 
     if (status === 404) {
@@ -34,13 +32,11 @@ const publish = async (platform, arch) => {
         return;
     }
 
-    console.log('Repack zip to tgz');
     await repack(platform, arch);
 
-    console.log('Publishing package');
     await exec('npm publish --access public', {cwd: __dirname})
 
-    console.log(`Package ${pkg.name} has been published successfully`);
+    console.log(`[${version}] Package ${pkg.name} has been published successfully`);
 }
 
 (async () => {

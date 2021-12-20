@@ -9,8 +9,6 @@ const {NOT_FOUND} = require("../../utils/exit-codes");
 const download = (version, platform, arch) => {
     const name = `${getName(platform, arch)}.zip`;
 
-    console.log(`Downloading ${name}`);
-
     return fetch(getUrl(version, platform, arch)).then(
         res => {
             if (res.status === 404) {
