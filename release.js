@@ -25,15 +25,21 @@ const getTags = async (repoPath) => {
     const cypressTags = await getTags(CYPRESS_DIR);
     const currentTags = await getTags('.');
 
-    const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
+    // const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
 
+    const newTags = ['9.2.0'];
     if (!newTags.length) {
         console.log('No new tags. Skipping.');
         process.exit(0);
     }
 
     for (let tag of newTags) {
-        await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
+        const { code, stderr } = await exec(`node packages/binary/release.js ${tag}`, { cwd: __dirname });
+
+        if (code !== 0) {
+            console.error(stderr);
+            process.exit(code);
+        }
 
         await git.tag([
             '-a', `v${tag}`,
@@ -60,6 +66,3 @@ const getTags = async (repoPath) => {
         await exec('npm publish --access public', { cwd: __dirname });
     }
 })();
-
-
-

@@ -5,7 +5,7 @@ module.exports = (command, options = {}) => new Promise(resolve => {
       shell.pushd(options.cwd);
    }
 
-   shell.exec(command, {async: false});
+   const result = shell.exec(command, {async: false});
 
-   resolve();
+   resolve(result);
 });

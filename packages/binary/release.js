@@ -29,10 +29,15 @@ const publish = async (platform, arch) => {
 
     if (status === 404) {
         console.log(`Binary not found for ${pkg.name}`);
-        return;
+        process.exit(1);
     }
 
-    await repack(platform, arch);
+    const filePath = await repack(platform, arch);
+
+    if (!fs.existsSync(filePath)) {
+        console.error(`File not found ${filePath}`);
+        process.exit(1);
+    }
 
     await exec('npm publish --access public', {cwd: __dirname})
 
@@ -45,10 +50,15 @@ const publish = async (platform, arch) => {
         process.exit(1);
     }
 
-    for(let arch of AVAILABLE_ARCH_LIST) {
-        for (let platform of AVAILABLE_PLATFORMS) {
-            await publish(platform, arch)
+    try {
+        for(let arch of AVAILABLE_ARCH_LIST) {
+            for (let platform of AVAILABLE_PLATFORMS) {
+                await publish(platform, arch)
+            }
         }
+    } catch(e) {
+        console.error('e',e);
+        process.exit(1);
     }
 
     process.exit(0);

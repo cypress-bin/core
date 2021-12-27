@@ -7,6 +7,8 @@ const repack = async (platform, arch) => {
     const archive = path.join(__dirname, `${name}.zip`);
 
     await xz(`-v9 ${archive}`);
+
+    return `${archive}.xz`;
 };
 
 module.exports = repack;
