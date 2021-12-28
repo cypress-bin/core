@@ -25,9 +25,8 @@ const getTags = async (repoPath) => {
     const cypressTags = await getTags(CYPRESS_DIR);
     const currentTags = await getTags('.');
 
-    // const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
+    const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
 
-    const newTags = ['9.2.0'];
     if (!newTags.length) {
         console.log('No new tags. Skipping.');
         process.exit(0);
