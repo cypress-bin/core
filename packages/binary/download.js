@@ -12,7 +12,7 @@ const download = (version, platform, arch) => {
     return fetch(getUrl(version, platform, arch)).then(
         res => {
             if (res.status === 404) {
-                console.error(`Package for version ${version} not found`);
+                console.error(`Package ${platform} ${arch} for version ${version} not found`);
                 return 404;
             }
 
