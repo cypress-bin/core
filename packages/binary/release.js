@@ -9,7 +9,8 @@ const {AVAILABLE_ARCH_LIST, AVAILABLE_PLATFORMS} = require("../../utils/constant
 const getBinaryName = require("../../utils/get-binary-name");
 const clean = require('../../utils/clean');
 const exec = require('../../utils/exec');
-const repack = require("./repack");
+const shell = require('shelljs');
+const getName = require("../../utils/get-name");
 
 const publish = async (platform, arch) => {
     const pkg = require(path.join(__dirname, './templates/package.json'));
@@ -20,11 +21,6 @@ const publish = async (platform, arch) => {
 
     console.log(`[${version}] Start publishing ${pkg.name}`);
 
-    fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
-
-    await clean('./**/*.zip');
-    await clean('./**/*.xz');
-
     const status = await download(version, platform, arch);
 
     if (status === 404) {
@@ -32,14 +28,17 @@ const publish = async (platform, arch) => {
         process.exit(1);
     }
 
-    const filePath = await repack(platform, arch);
+    const rootDir = path.join(__dirname);
+    const distDir = path.join(rootDir, `dist_${platform}_${arch}`);
+    const zipName = `${getName(platform, arch)}.zip`;
 
-    if (!fs.existsSync(filePath)) {
-        console.error(`File not found ${filePath}`);
-        process.exit(1);
-    }
+    shell.mkdir(distDir);
+    shell.mv(path.join(__dirname, zipName), path.join(distDir, zipName));
 
-    await exec('npm publish --access public', {cwd: __dirname})
+    fs.writeFileSync(path.join(distDir, 'package.json'), JSON.stringify(pkg, null, 2));
+
+    await exec('npm publish --access public', {cwd: distDir})
+    shell.rm('-rf', distDir);
 
     console.log(`[${version}] Package ${pkg.name} has been published successfully`);
 }

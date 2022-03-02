@@ -3,3 +3,6 @@ archives
 cypress
 node_modules
 .idea
+dist
+packages/binary/dist_linux_x64
+packages/binary/dist_win32_x64

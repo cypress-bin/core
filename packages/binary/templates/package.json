@@ -2,7 +2,7 @@
   "name": "@cypress-bin/binary",
   "license": "MIT",
   "files": [
-    "*.zip.xz"
+    "*.zip"
   ],
   "description": "Binary files for Cypress"
 }

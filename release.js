@@ -2,12 +2,13 @@ const simpleGit = require('simple-git');
 const exec = require('./utils/exec');
 const clean = require('./utils/clean');
 const getBinaryName = require('./utils/get-binary-name');
+const shell = require('shelljs');
 const semver = require('semver');
 const fs = require('fs');
 const path = require('path');
 const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST} = require("./utils/constants");
 
-const MIN_RELEASE_VERSION = '5.2.0';
+const MIN_RELEASE_VERSION = '9.5.1';
 const CYPRESS_DIR = 'cypress';
 const git = simpleGit().addConfig('user.name', 'Piotr Sałkowski').addConfig('user.email', 'skc.peter@gmail.com');
 
@@ -24,7 +25,6 @@ const getTags = async (repoPath) => {
     await git.clone('https://github.com/cypress-io/cypress.git', CYPRESS_DIR, {'--depth': 1});
     const cypressTags = await getTags(CYPRESS_DIR);
     const currentTags = await getTags('.');
-
     const newTags = cypressTags.filter(tag => !currentTags.includes(tag) && semver.gte(tag, MIN_RELEASE_VERSION));
 
     if (!newTags.length) {
@@ -59,9 +59,18 @@ const getTags = async (repoPath) => {
         pkg.version = tag;
         pkg.peerDependency = peerDependency;
 
-        fs.writeFileSync(path.join(__dirname, 'package.json'), JSON.stringify(pkg, null, 2));
+        const rootDir = path.join(__dirname);
+        const distDir = path.join(rootDir, 'dist');
 
-        console.log('Publish package to npm registry');
-        await exec('npm publish --access public', { cwd: __dirname });
+        shell.mkdir('-p', path.join(distDir, 'utils'));
+        shell.cp('-R', path.join(rootDir, 'unpack.js'), path.join(distDir, 'unpack.js'));
+        shell.cp('-R', path.join(rootDir, 'utils/*'), path.join(distDir, 'utils'));
+
+        fs.writeFileSync(path.join(distDir, 'package.json'), JSON.stringify(pkg, null, 2));
+
+        console.log('Publishing package to npm registry');
+        await exec('npm publish --access public', { cwd: distDir });
+
+        shell.rm('-rf', distDir);
     }
 })();

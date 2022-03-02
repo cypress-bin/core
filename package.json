@@ -7,12 +7,13 @@
     "node-fetch": "2",
     "rimraf": "^3.0.2",
     "semver": "^7.3.5",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "tar": "^6.1.11",
     "yargs": "^17.3.0"
   },
   "description": "This package is dedicated for users that are behind a firewall, and have access only to npm registry.",
   "devDependencies": {
+    "@types/shelljs": "^0.8.11",
     "simple-git": "^2.48.0"
   }
 }

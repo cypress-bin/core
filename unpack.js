@@ -4,7 +4,6 @@ const {AVAILABLE_PLATFORMS, AVAILABLE_ARCH_LIST, BIN_DIR} = require("./utils/con
 const getName = require("./utils/get-name");
 const clean = require("./utils/clean");
 const exec = require("./utils/exec");
-const xz = require("./utils/xz");
 const path = require('path');
 const AdmZip = require('adm-zip');
 const getBinaryName = require('./utils/get-binary-name');
@@ -38,8 +37,7 @@ const unpack = async (platform, arch) => {
     // recreate directory
     fs.mkdirSync(bin, {recursive: true});
 
-    console.log(`Unpacking ${archive}.xz`)
-    await xz(`-d ${archive}.xz`);
+    console.log(`Unpacking ${archive}`)
 
     const zip = new AdmZip(archive);
 
